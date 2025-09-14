@@ -5,109 +5,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Viewer</title>
   <style>
-    /* Background */
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
-      background-size: 600% 600%;
-      animation: gradientBG 15s ease infinite;
+      background: linear-gradient(-45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+      background-size: 400% 400%;
+      animation: gradient 8s ease infinite;
+      font-family: Arial, sans-serif;
       color: #fff;
-      overflow: hidden;
     }
-    @keyframes gradientBG {
+
+    @keyframes gradient {
       0% {background-position: 0% 50%;}
       50% {background-position: 100% 50%;}
       100% {background-position: 0% 50%;}
     }
 
-    /* Floating Instagram Icon */
-    .logo {
-      position: absolute;
-      top: 40px;
-      font-size: 3rem;
-      text-shadow: 0 0 20px rgba(255,255,255,0.6),
-                   0 0 40px rgba(214,41,118,0.9),
-                   0 0 80px rgba(72,50,164,0.8);
-      animation: float 4s ease-in-out infinite;
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-      100% { transform: translateY(0); }
-    }
-
-    /* Card */
-    .card {
-      background: rgba(255,255,255,0.1);
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      padding: 30px;
       border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
       text-align: center;
-      width: 90%;
-      max-width: 420px;
-      border: 1px solid rgba(255,255,255,0.3);
-      animation: glow 3s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from { box-shadow: 0 0 20px #d62976; }
-      to { box-shadow: 0 0 40px #4f5bd5; }
+      width: 320px;
     }
 
     h1 {
-      font-size: 2.5rem;
-      font-weight: 900;
-      margin-bottom: 25px;
-      background: linear-gradient(45deg,#feda75,#d62976,#4f5bd5);
+      font-size: 26px;
+      font-weight: bold;
+      background: linear-gradient(to right, #f58529, #dd2a7b, #8134af, #515bd4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-
-    label {
-      display: block;
-      margin: 15px 0 8px;
-      font-weight: 600;
-      text-align: left;
+      margin-bottom: 20px;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 10px;
+      margin: 8px 0;
       border: none;
+      border-radius: 10px;
       outline: none;
-      font-size: 1rem;
-      margin-bottom: 15px;
-      background: rgba(255,255,255,0.2);
-      color: #fff;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+      font-size: 14px;
     }
-    input::placeholder { color: #ddd; }
 
     button {
-      background: linear-gradient(45deg,#d62976,#962fbf,#4f5bd5);
-      color: #fff;
-      font-size: 1rem;
-      font-weight: bold;
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af);
       border: none;
-      padding: 14px 30px;
-      border-radius: 30px;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
       cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    }
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease-in-out;
     }
 
-    /* Result */
-    .result {
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .logo {
+      font-size: 40px;
+      margin-bottom: 15px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">📸</div>
+    <h1>PROFILE VIEWER</h1>
+    <input type="text" id="username" placeholder="Enter your username">
+    <input type="text" id="searchname" placeholder="Enter the username to search">
+    <button onclick="showResult()">Search</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function showResult() {
+      const searchname = document.getElementById("searchname").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (searchname === "") {
+        resultDiv.innerHTML = "⚠️ Please enter username to search!";
+      } else {
+        resultDiv.innerHTML = "🔍 " + searchname;
+      }
+    }
+  </script>
+</body>
+</html>    .result {
       margin-top: 25px;
       font-size: 1.8rem;
       font-weight: 800;
