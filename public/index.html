@@ -1,40 +1,163 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Private Account — Testing Only (Demo)</title>
-  <meta name="description" content="Private account viewer — demo (educational). This frontend only sends two usernames (requester & target) to a configured backend. Do NOT enter passwords."/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Viewer</title>
   <style>
-    /* ---------- Vars ---------- */
-    :root{
-      --glass: rgba(255,255,255,0.06);
-      --muted: rgba(255,255,255,0.85);
-      --accent1: #ff4d6d;
-      --accent2: #7c5cff;
-      --accent3: #43e97b;
-      --card-bg: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      --glass-2: rgba(255,255,255,0.02);
-      --shadow: 0 12px 45px rgba(2,6,23,0.55);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    /* Background */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+      background-size: 600% 600%;
+      animation: gradientBG 15s ease infinite;
+      color: #fff;
+      overflow: hidden;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
     }
 
-    /* ---------- Base ---------- */
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:#04060a;color:#fff;-webkit-font-smoothing:antialiased}
-    body{display:flex;align-items:center;justify-content:center;padding:36px}
-
-    /* ---------- 3D stage ---------- */
-    .stage{
-      width:1050px;max-width:100%;height:640px;max-height:90vh;position:relative;perspective:1400px;
-      display:grid;grid-template-columns:460px 1fr;gap:28px;align-items:center;
+    /* Floating Instagram Icon */
+    .logo {
+      position: absolute;
+      top: 40px;
+      font-size: 3rem;
+      text-shadow: 0 0 20px rgba(255,255,255,0.6),
+                   0 0 40px rgba(214,41,118,0.9),
+                   0 0 80px rgba(72,50,164,0.8);
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0); }
     }
 
-    /* ---------- Background layers (3D parallax illusion) ---------- */
-    .bg {
-      position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:22px;
-      transform-style:preserve-3d;
+    /* Card */
+    .card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      width: 90%;
+      max-width: 420px;
+      border: 1px solid rgba(255,255,255,0.3);
+      animation: glow 3s ease-in-out infinite alternate;
     }
+    @keyframes glow {
+      from { box-shadow: 0 0 20px #d62976; }
+      to { box-shadow: 0 0 40px #4f5bd5; }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 25px;
+      background: linear-gradient(45deg,#feda75,#d62976,#4f5bd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 8px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+    }
+    input::placeholder { color: #ddd; }
+
+    button {
+      background: linear-gradient(45deg,#d62976,#962fbf,#4f5bd5);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    }
+
+    /* Result */
+    .result {
+      margin-top: 25px;
+      font-size: 1.8rem;
+      font-weight: 800;
+      min-height: 40px;
+    }
+
+    .typing {
+      display: inline-block;
+      border-right: 2px solid #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 2s steps(20) forwards, blink 0.7s infinite;
+    }
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">📸</div>
+  <div class="card">
+    <h1>PROFILE VIEWER</h1>
+    <label>Option 1: Enter your username</label>
+    <input type="text" id="yourUsername" placeholder="@your_name">
+
+    <label>Option 2: Enter search username</label>
+    <input type="text" id="searchUsername" placeholder="@search_name">
+
+    <button onclick="showResult()">Search</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function showResult() {
+      const searchUsername = document.getElementById("searchUsername").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (searchUsername) {
+        resultDiv.innerHTML = `<span class="typing">🔍 ${searchUsername}</span>`;
+      } else {
+        resultDiv.innerHTML = "⚠️ Please enter username to search!";
+      }
+    }
+  </script>
+</body>
+</html>    }
     .bg .layer{
       position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);filter:blur(50px);
       mix-blend-mode:screen;opacity:0.85;
