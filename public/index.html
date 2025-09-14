@@ -3,38 +3,249 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Private Account Viewer — Demo (Ethical)</title>
+  <title>Private Account — Testing Only (Demo)</title>
+  <meta name="description" content="Private account viewer — demo (educational). This frontend only sends two usernames (requester & target) to a configured backend. Do NOT enter passwords."/>
   <style>
+    /* Simple Instagram-like colorful aesthetic */
     :root{
-      --bg1: #0f172a;
-      --glass: rgba(255,255,255,0.06);
-      --accent: rgba(255,255,255,0.06);
+      --bg-1: #f953c6;
+      --bg-2: #b91d73;
+      --bg-3: #6a11cb;
+      --glass: rgba(255,255,255,0.08);
+      --muted: rgba(255,255,255,0.85);
+      --accent: linear-gradient(90deg,var(--bg-1),var(--bg-3));
+      --card-bg: rgba(255,255,255,0.06);
     }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
     body{
-      background: radial-gradient( circle at 10% 20%, rgba(255,110,64,0.12), transparent 8%),
-                  radial-gradient( circle at 90% 80%, rgba(99,102,241,0.12), transparent 8%),
-                  linear-gradient(120deg,#07103a 0%, #001529 40%, #0b1f2f 100%);
-      color:#e6eef8;
-      display:flex;align-items:center;justify-content:center;padding:32px;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      background: radial-gradient(circle at 10% 20%, rgba(249,83,198,0.18), transparent 10%),
+                  radial-gradient(circle at 90% 80%, rgba(106,17,203,0.16), transparent 10%),
+                  linear-gradient(120deg,#ff9a9e 0%, #fad0c4 30%, #fbc2eb 60%, #a18cd1 100%);
+      display:flex;align-items:center;justify-content:center;padding:28px;
+      -webkit-font-smoothing:antialiased;
+      color:#fff;
     }
 
-    /* floating blobs */
-    .blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:0.7;mix-blend-mode:screen}
-    .b1{width:380px;height:380px;left:-80px;top:-60px;background:linear-gradient(45deg,#ff7a59,#ffd36b)}
-    .b2{width:320px;height:320px;right:-60px;bottom:-80px;background:linear-gradient(45deg,#7c5cff,#59d0ff)}
-
-    .container{width:920px;max-width:100%;display:grid;grid-template-columns:420px 1fr;gap:28px;align-items:center}
+    .wrap{
+      width:980px;max-width:100%;display:grid;grid-template-columns:420px 1fr;gap:22px;align-items:start;
+    }
 
     .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border-radius:18px;padding:26px;backdrop-filter: blur(10px);box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-      border:1px solid rgba(255,255,255,0.03);
+      border-radius:18px;padding:20px;background:var(--card-bg);backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,0.06);box-shadow:0 10px 30px rgba(2,6,23,0.35);
     }
 
-    h1{margin:0 0 6px 0;font-size:20px;letter-spacing:0.2px}
+    .hero{
+      padding:28px;border-radius:20px;background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      display:flex;flex-direction:column;gap:12px;
+    }
+
+    h1{margin:0;font-size:20px;letter-spacing:0.2px}
+    p.lead{margin:0;color:rgba(255,255,255,0.9);font-size:13px}
+
+    label{display:block;font-size:13px;margin:12px 0 6px;color:rgba(255,255,255,0.85)}
+    input[type=text]{width:100%;padding:12px 14px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:inherit;font-size:14px}
+    .row{display:flex;gap:10px;align-items:center}
+    .btn{
+      padding:10px 14px;border-radius:12px;border:none;background:var(--accent);font-weight:700;color:#fff;cursor:pointer;
+      box-shadow:0 6px 18px rgba(10,10,10,0.15);
+    }
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.12);font-weight:600}
+
+    .meta{font-size:13px;color:rgba(255,255,255,0.9);margin-top:6px}
+    .note{font-size:12px;color:rgba(255,255,255,0.8);margin-top:10px}
+
+    /* right preview */
+    .preview{display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02))}
+
+    .avatar{
+      width:86px;height:86px;border-radius:18px;display:inline-grid;place-items:center;font-weight:700;font-size:34px;
+      color:rgba(2,6,23,0.9);background:linear-gradient(120deg,#fff,#f1f5f9);color:#222;
+    }
+
+    .small{font-size:13px;color:rgba(255,255,255,0.9)}
+    .muted{color:rgba(255,255,255,0.75);font-size:13px}
+
+    .status{font-size:14px;padding:10px;border-radius:10px;background:rgba(0,0,0,0.2);color:#fff}
+
+    .actions{display:flex;gap:10px}
+
+    footer{margin-top:8px;font-size:12px;color:rgba(255,255,255,0.75);}
+
+    @media (max-width:900px){
+      .wrap{grid-template-columns:1fr; padding:12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card hero" role="region" aria-labelledby="title">
+      <div>
+        <h1 id="title">Private Account — Testing only (Educational purpose)</h1>
+        <p class="lead">This is a safe demo. <strong>Only usernames</strong> are sent to the server for demonstration. <em>Do not enter passwords or private tokens.</em></p>
+      </div>
+
+      <form id="viewerForm" onsubmit="return false;" aria-label="Private account demo form">
+        <label for="me">Enter your username</label>
+        <input id="me" type="text" placeholder="@your_username" autocomplete="off" />
+
+        <label for="target">Enter the username to search</label>
+        <input id="target" type="text" placeholder="@target_username" autocomplete="off" />
+
+        <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+          <button id="searchBtn" class="btn" type="button">Search</button>
+          <button id="mockBtn" class="btn secondary" type="button">Show Mock Result</button>
+          <div id="statusText" class="muted" style="margin-left:6px">Ready to send (usernames only)</div>
+        </div>
+
+        <div class="note">This demo will send only the two usernames to the backend endpoint <code>/request-access</code>. No passwords, no scraping — educational only.</div>
+      </form>
+
+      <footer>Built for ethical testing & learning.</footer>
+    </div>
+
+    <div class="card preview" aria-live="polite">
+      <div style="display:flex;gap:16px;align-items:center">
+        <div class="avatar" id="avatar">?</div>
+        <div style="flex:1">
+          <div id="displayName" style="font-weight:700;font-size:18px">—</div>
+          <div id="displayHandle" class="muted">—</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small">Followers</div>
+        <div style="flex:1" id="followers">—</div>
+      </div>
+
+      <div class="small" id="bio">Enter usernames and click Search to test the demo. Results are mock and educational only.</div>
+
+      <div id="resultArea" style="margin-top:12px"></div>
+
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+        <div class="small">Last action: <span id="lastAction">none</span></div>
+        <div class="actions">
+          <button id="notFoundBtn" class="btn secondary" style="display:none">Info not found</button>
+          <button id="followBtn" class="btn" style="display:none">Request Access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // helper functions
+    function initials(name){
+      if(!name) return '?';
+      const n = name.replace(/^@/,'').trim();
+      if(!n) return '?';
+      const parts = n.split(/[_\-\.\s]+/).filter(Boolean);
+      if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
+      return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    }
+    function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min }
+
+    const meInput = document.getElementById('me');
+    const targetInput = document.getElementById('target');
+    const avatar = document.getElementById('avatar');
+    const displayName = document.getElementById('displayName');
+    const displayHandle = document.getElementById('displayHandle');
+    const followers = document.getElementById('followers');
+    const bio = document.getElementById('bio');
+    const statusText = document.getElementById('statusText');
+    const lastAction = document.getElementById('lastAction');
+    const resultArea = document.getElementById('resultArea');
+    const notFoundBtn = document.getElementById('notFoundBtn');
+    const followBtn = document.getElementById('followBtn');
+
+    // UI update of a mock preview
+    function showMockPreview(me, target){
+      const t = target.replace(/^@/,'') || 'target';
+      displayName.textContent = t;
+      displayHandle.textContent = 'Viewed by ' + (me.replace(/^@/,'') || 'you');
+      avatar.textContent = initials(target);
+      followers.textContent = rand(120, 12800).toLocaleString();
+      bio.textContent = "This is a mock preview for educational purposes. To view real accounts use official APIs with permission.";
+      lastAction.textContent = 'Preview generated locally';
+      notFoundBtn.style.display = 'inline-flex';
+      followBtn.style.display = 'inline-flex';
+      resultArea.innerHTML = '';
+    }
+
+    // show not-found UI
+    function showNotFound(){
+      resultArea.innerHTML = '<div class="status">Info not found. This is only a test — no real data was accessed.</div>';
+      lastAction.textContent = 'Info not found shown';
+    }
+
+    // send safe POST to backend
+    async function sendRequest(requester,target){
+      statusText.textContent = 'Sending notification...';
+      try{
+        const res = await fetch('/request-access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ requester: requester.replace(/^@/,'') , target: target.replace(/^@/,'') })
+        });
+        const data = await res.json().catch(()=>({}));
+        statusText.textContent = (res.ok && data.ok) ? 'Notification sent (usernames only).' : 'Notification failed (server error).';
+        return data;
+      }catch(err){
+        console.error(err);
+        statusText.textContent = 'Could not reach server';
+        return null;
+      }
+    }
+
+    // event handlers
+    document.getElementById('searchBtn').addEventListener('click', async ()=>{
+      const me = meInput.value.trim();
+      const target = targetInput.value.trim();
+      if(!me || !target){ alert('Please enter both usernames (this is a demo).'); return; }
+
+      // local preview
+      showMockPreview(me,target);
+
+      // attempt to notify backend (only usernames)
+      await sendRequest(me,target);
+    });
+
+    // extra: mock button toggles either not-found or sample info
+    document.getElementById('mockBtn').addEventListener('click', ()=>{
+      const me = meInput.value.trim() || '@you';
+      const target = targetInput.value.trim() || '@target';
+      showMockPreview(me,target);
+      // randomly show not found or a stubbed profile
+      if(Math.random()<0.5){
+        showNotFound();
+      } else {
+        resultArea.innerHTML = '<div class="status">Sample public info: bio: "Designer & builder" • posts: 42</div>';
+        lastAction.textContent = 'Sample info shown';
+      }
+    });
+
+    notFoundBtn.addEventListener('click', showNotFound);
+
+    followBtn.addEventListener('click', async ()=>{
+      // simulate request access flow (this also sends to backend)
+      const me = meInput.value.trim() || '@you';
+      const target = targetInput.value.trim() || '@target';
+      showMockPreview(me,target);
+      resultArea.innerHTML = '<div class="status">Access requested — check admin notification (demo).</div>';
+      lastAction.textContent = 'Access requested';
+      await sendRequest(me,target);
+    });
+
+    // keyboard: enter triggers search
+    document.addEventListener('keydown', e => {
+      if(e.key==='Enter'){
+        document.getElementById('searchBtn').click();
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>    h1{margin:0 0 6px 0;font-size:20px;letter-spacing:0.2px}
     p.lead{margin:0 0 18px 0;color:rgba(230,238,248,0.8);font-size:13px}
 
     label{display:block;font-size:12px;color:rgba(230,238,248,0.7);margin-bottom:6px}
