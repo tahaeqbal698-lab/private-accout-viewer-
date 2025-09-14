@@ -17,12 +17,12 @@
       position: relative;
     }
 
-    /* Instagram logo background */
+    /* Instagram logo faint background */
     body::before {
       content: "";
       background: url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png') no-repeat center;
       background-size: 300px 300px;
-      opacity: 0.1;
+      opacity: 0.08;
       position: absolute;
       top: 0;
       left: 0;
@@ -32,9 +32,91 @@
     }
 
     .card {
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.75);
       padding: 30px;
       border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+      text-align: center;
+      width: 350px;
+      animation: float 3s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+      color: white;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.7);
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background: linear-gradient(90deg, #ff416c, #ff4b2b);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #feda75;
+      text-shadow: 0 0 10px #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>PROFILE VIEWER</h1>
+    <input type="text" id="user1" placeholder="Enter your username">
+    <input type="text" id="user2" placeholder="Enter search username">
+    <button onclick="redirect()">Search</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    function redirect() {
+      const user2 = document.getElementById("user2").value.trim();
+      if (!user2) {
+        document.getElementById("output").innerText = "⚠️ Please enter a username to search!";
+        return;
+      }
+      document.getElementById("output").innerText = `Redirecting to Instagram: ${user2}`;
+      setTimeout(() => {
+        window.location.href = `https://instagram.com/${user2}`;
+      }, 1500);
+    }
+  </script>
+</body>
+</html>      border-radius: 20px;
       box-shadow: 0 0 30px rgba(0,0,0,0.6);
       text-align: center;
       width: 350px;
