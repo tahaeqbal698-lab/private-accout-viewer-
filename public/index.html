@@ -6,35 +6,322 @@
   <title>Private Account — Testing Only (Demo)</title>
   <meta name="description" content="Private account viewer — demo (educational). This frontend only sends two usernames (requester & target) to a configured backend. Do NOT enter passwords."/>
   <style>
-    /* Simple Instagram-like colorful aesthetic */
+    /* ---------- Vars ---------- */
     :root{
-      --bg-1: #f953c6;
-      --bg-2: #b91d73;
-      --bg-3: #6a11cb;
-      --glass: rgba(255,255,255,0.08);
+      --glass: rgba(255,255,255,0.06);
       --muted: rgba(255,255,255,0.85);
-      --accent: linear-gradient(90deg,var(--bg-1),var(--bg-3));
-      --card-bg: rgba(255,255,255,0.06);
+      --accent1: #ff4d6d;
+      --accent2: #7c5cff;
+      --accent3: #43e97b;
+      --card-bg: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      --glass-2: rgba(255,255,255,0.02);
+      --shadow: 0 12px 45px rgba(2,6,23,0.55);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
+
+    /* ---------- Base ---------- */
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
-    body{
-      background: radial-gradient(circle at 10% 20%, rgba(249,83,198,0.18), transparent 10%),
-                  radial-gradient(circle at 90% 80%, rgba(106,17,203,0.16), transparent 10%),
-                  linear-gradient(120deg,#ff9a9e 0%, #fad0c4 30%, #fbc2eb 60%, #a18cd1 100%);
-      display:flex;align-items:center;justify-content:center;padding:28px;
-      -webkit-font-smoothing:antialiased;
-      color:#fff;
+    html,body{height:100%;margin:0;background:#04060a;color:#fff;-webkit-font-smoothing:antialiased}
+    body{display:flex;align-items:center;justify-content:center;padding:36px}
+
+    /* ---------- 3D stage ---------- */
+    .stage{
+      width:1050px;max-width:100%;height:640px;max-height:90vh;position:relative;perspective:1400px;
+      display:grid;grid-template-columns:460px 1fr;gap:28px;align-items:center;
     }
 
-    .wrap{
-      width:980px;max-width:100%;display:grid;grid-template-columns:420px 1fr;gap:22px;align-items:start;
+    /* ---------- Background layers (3D parallax illusion) ---------- */
+    .bg {
+      position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:22px;
+      transform-style:preserve-3d;
+    }
+    .bg .layer{
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);filter:blur(50px);
+      mix-blend-mode:screen;opacity:0.85;
+    }
+    .bg .l1{width:640px;height:640px;background:radial-gradient(circle at 30% 30%, rgba(255,77,109,0.18), transparent 20%), linear-gradient(45deg,#ff4d6d,#ffa69e);transform:translate3d(-200px,-120px, -120px) rotateZ(-8deg)}
+    .bg .l2{width:520px;height:520px;background:radial-gradient(circle at 70% 70%, rgba(124,92,255,0.16), transparent 18%), linear-gradient(45deg,#7c5cff,#59d0ff);transform:translate3d(220px,120px, -80px) rotateZ(6deg)}
+    .bg .l3{width:860px;height:860px;background:conic-gradient(from 120deg, rgba(67,233,123,0.06), transparent 20%), linear-gradient(45deg,#43e97b,#38a3a5);opacity:0.6;transform:translate3d(0,60px, -200px) rotateZ(10deg)}
+
+    /* animated grid/inset */
+    .bg .grid {
+      position:absolute;inset:-10%;background-image:linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size:200px 200px, 200px 200px;mix-blend-mode:overlay;opacity:0.25;transform:translateZ(-320px) scale(1.2);
     }
 
+    /* ---------- Card styles ---------- */
     .card{
-      border-radius:18px;padding:20px;background:var(--card-bg);backdrop-filter:blur(8px);
-      border:1px solid rgba(255,255,255,0.06);box-shadow:0 10px 30px rgba(2,6,23,0.35);
+      position:relative;z-index:10;border-radius:18px;padding:22px;background:var(--card-bg);box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,0.03);backdrop-filter:blur(8px);
     }
+
+    /* left panel */
+    .left h1{margin:0;font-size:20px}
+    .lead{margin:6px 0 18px;color:rgba(255,255,255,0.9);font-size:13px}
+    label{display:block;font-size:13px;margin:10px 0 6px;color:rgba(255,255,255,0.95)}
+    input[type=text]{width:100%;padding:12px 14px;border-radius:12px;border:none;background:rgba(255,255,255,0.04);color:inherit;font-size:14px}
+    .row{display:flex;gap:10px;align-items:center}
+
+    .btn{
+      padding:11px 16px;border-radius:12px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(12,10,28,0.4);
+      transform:translateZ(40px);
+    }
+    .secondary{background:transparent;border:1px solid rgba(255,255,255,0.08);font-weight:600}
+
+    .note{font-size:12px;color:rgba(255,255,255,0.78);margin-top:12px}
+
+    /* right preview card with 3D tilt effect */
+    .preview{
+      transform-style:preserve-3d;transition:transform 0.25s ease;display:flex;flex-direction:column;gap:12px;padding:26px;border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .preview-inner{transform:translateZ(40px)}
+    .avatar{width:110px;height:110px;border-radius:18px;display:inline-grid;place-items:center;font-weight:800;font-size:42px;color:#111;background:linear-gradient(120deg,#fff,#f1f5f9);box-shadow:0 8px 30px rgba(2,6,23,0.35)}
+    .displayName{font-weight:800;font-size:20px}
+    .handle{color:rgba(255,255,255,0.85);font-size:13px}
+
+    .stats{display:flex;gap:14px;font-size:13px;color:rgba(255,255,255,0.9)}
+    .status{padding:12px;border-radius:12px;background:rgba(0,0,0,0.18)}
+
+    footer{font-size:12px;color:rgba(255,255,255,0.75);margin-top:8px}
+
+    /* ---------- Particles canvas ---------- */
+    canvas.particles{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:0.9}
+
+    /* small screens */
+    @media (max-width:980px){
+      .stage{grid-template-columns:1fr;gap:14px;height:auto;padding-bottom:18px}
+      .bg{border-radius:14px}
+      .preview{order:2}
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <!-- background 3D layers -->
+    <div class="bg" aria-hidden="true">
+      <div class="layer l1"></div>
+      <div class="layer l2"></div>
+      <div class="layer l3"></div>
+      <div class="grid"></div>
+      <canvas class="particles" id="particles"></canvas>
+    </div>
+
+    <!-- left: controls -->
+    <div class="card left">
+      <h1>Private Account — Testing only (Educational purpose)</h1>
+      <p class="lead">Highly stylized demo UI. <strong>Only usernames</strong> are sent to the server. Never enter passwords.</p>
+
+      <form id="viewerForm" onsubmit="return false;">
+        <label for="me">Enter your username</label>
+        <input id="me" type="text" placeholder="@your_username" autocomplete="off" />
+
+        <label for="target">Enter the username to search</label>
+        <input id="target" type="text" placeholder="@target_username" autocomplete="off" />
+
+        <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+          <button id="searchBtn" class="btn" type="button">Search</button>
+          <button id="mockBtn" class="btn secondary" type="button">Mock Result</button>
+          <div id="statusText" style="color:rgba(255,255,255,0.9);font-size:13px;margin-left:8px">Ready</div>
+        </div>
+
+        <div class="note">Demo sends <strong>only</strong> user names to <code>/request-access</code>. This is educational & ethical — no scraping.</div>
+      </form>
+
+      <footer>Designed with 3D parallax & animated particles.</footer>
+    </div>
+
+    <!-- right: preview -->
+    <div class="card preview" id="previewCard" aria-live="polite">
+      <div class="preview-inner">
+        <div style="display:flex;gap:18px;align-items:center">
+          <div class="avatar" id="avatar">?</div>
+          <div>
+            <div class="displayName" id="displayName">—</div>
+            <div class="handle" id="displayHandle">—</div>
+          </div>
+        </div>
+
+        <div class="stats" style="margin-top:6px">
+          <div>Followers: <strong id="followers">—</strong></div>
+          <div>Following: <strong id="following">—</strong></div>
+          <div>Posts: <strong id="posts">—</strong></div>
+        </div>
+
+        <div id="bio" style="margin-top:10px;color:rgba(255,255,255,0.9)">Enter usernames and press Search — mock preview will appear.</div>
+
+        <div id="resultArea" style="margin-top:12px"></div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+          <div style="font-size:13px;color:rgba(255,255,255,0.9)">Last action: <span id="lastAction">none</span></div>
+          <div style="display:flex;gap:8px">
+            <button id="notFoundBtn" class="secondary" style="display:none;padding:8px 12px;border-radius:10px">Info not found</button>
+            <button id="followBtn" class="btn" style="display:none;padding:8px 12px;border-radius:10px">Request Access</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------- Particles (canvas) ---------- */
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    function resize() {
+      W = canvas.width = canvas.clientWidth;
+      H = canvas.height = canvas.clientHeight;
+    }
+    function rand(min,max){return Math.random()*(max-min)+min}
+    function initParticles(){
+      particles = [];
+      for(let i=0;i<55;i++){
+        particles.push({
+          x: rand(0,W), y: rand(0,H),
+          r: rand(0.6,3.6),
+          vx: rand(-0.3,0.3),
+          vy: rand(-0.2,0.6),
+          hue: rand(200,340)
+        });
+      }
+    }
+    function drawParticles(){
+      ctx.clearRect(0,0,W,H);
+      for(const p of particles){
+        p.x += p.vx; p.y += p.vy;
+        if(p.x< -10) p.x = W+10;
+        if(p.x> W+10) p.x = -10;
+        if(p.y> H+10) p.y = -10;
+        ctx.beginPath();
+        const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+        g.addColorStop(0, `hsla(${p.hue},85%,65%,0.14)`);
+        g.addColorStop(1, `hsla(${p.hue},85%,65%,0)`);
+        ctx.fillStyle = g;
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+      }
+      requestAnimationFrame(drawParticles);
+    }
+    window.addEventListener('resize', ()=>{resize(); initParticles();});
+    resize(); initParticles(); drawParticles();
+
+    /* ---------- 3D tilt interaction ---------- */
+    const stage = document.getElementById('stage');
+    const preview = document.getElementById('previewCard');
+    stage.addEventListener('mousemove', (e)=>{
+      const rect = stage.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+      const dx = (e.clientX - cx);
+      const dy = (e.clientY - cy);
+      const rx = dy / 120;
+      const ry = -dx / 160;
+      preview.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+    });
+    stage.addEventListener('mouseleave', ()=> preview.style.transform = 'rotateX(0deg) rotateY(0deg)');
+
+    /* ---------- Demo logic (same API: /request-access) ---------- */
+    function initials(name){
+      if(!name) return '?';
+      const n = name.replace(/^@/,'').trim();
+      const parts = n.split(/[_\-\.\s]+/).filter(Boolean);
+      if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
+      return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    }
+    function randomInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min }
+
+    const meInput = document.getElementById('me');
+    const targetInput = document.getElementById('target');
+    const avatar = document.getElementById('avatar');
+    const displayName = document.getElementById('displayName');
+    const displayHandle = document.getElementById('displayHandle');
+    const followers = document.getElementById('followers');
+    const following = document.getElementById('following');
+    const posts = document.getElementById('posts');
+    const bio = document.getElementById('bio');
+    const statusText = document.getElementById('statusText');
+    const lastAction = document.getElementById('lastAction');
+    const resultArea = document.getElementById('resultArea');
+    const notFoundBtn = document.getElementById('notFoundBtn');
+    const followBtn = document.getElementById('followBtn');
+
+    async function sendRequest(requester,target){
+      try{
+        const res = await fetch('/request-access', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ requester: requester.replace(/^@/,''), target: target.replace(/^@/,'') })
+        });
+        const data = await res.json().catch(()=>({}));
+        return { ok: res.ok, data };
+      }catch(err){
+        console.error(err);
+        return { ok:false };
+      }
+    }
+
+    function showMock(me,target){
+      const t = target.replace(/^@/,'') || 'target';
+      displayName.textContent = t;
+      displayHandle.textContent = 'Viewed by ' + (me.replace(/^@/,'') || 'you');
+      avatar.textContent = initials(target);
+      followers.textContent = randomInt(120,12800).toLocaleString();
+      following.textContent = randomInt(10,1500).toLocaleString();
+      posts.textContent = randomInt(1,900).toLocaleString();
+      bio.textContent = "This is a mock preview — educational only. Use official APIs to view real accounts with permission.";
+      lastAction.textContent = 'Local preview';
+      notFoundBtn.style.display = 'inline-flex';
+      followBtn.style.display = 'inline-flex';
+      resultArea.innerHTML = '';
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', async ()=>{
+      const me = meInput.value.trim();
+      const target = targetInput.value.trim();
+      if(!me || !target){ alert('Please enter both usernames.'); return; }
+      statusText.textContent = 'Generating preview…';
+      showMock(me,target);
+      statusText.textContent = 'Notifying admin…';
+      const r = await sendRequest(me,target);
+      if(r.ok && r.data && r.data.ok){
+        statusText.textContent = 'Notification sent (usernames only).';
+      } else {
+        statusText.textContent = 'Notification failed or server unreachable.';
+      }
+    });
+
+    document.getElementById('mockBtn').addEventListener('click', ()=>{
+      const me = meInput.value.trim() || '@you';
+      const target = targetInput.value.trim() || '@target';
+      showMock(me,target);
+      if(Math.random() < 0.5){
+        resultArea.innerHTML = '<div class="status">Info not found — this is only a test.</div>';
+        lastAction.textContent = 'Not found (mock)';
+      } else {
+        resultArea.innerHTML = '<div class="status">Sample public info: bio: "Designer & builder" • posts: 42</div>';
+        lastAction.textContent = 'Sample info shown';
+      }
+    });
+
+    notFoundBtn.addEventListener('click', ()=>{
+      resultArea.innerHTML = '<div class="status">Info not found — demo only.</div>';
+      lastAction.textContent = 'Not found shown';
+    });
+
+    followBtn.addEventListener('click', async ()=>{
+      const me = meInput.value.trim() || '@you';
+      const target = targetInput.value.trim() || '@target';
+      resultArea.innerHTML = '<div class="status">Access requested — check admin notification (demo).</div>';
+      lastAction.textContent = 'Access requested';
+      await sendRequest(me,target);
+    });
+
+    // accessibility: Enter triggers search
+    document.addEventListener('keydown', e => { if(e.key==='Enter'){ document.getElementById('searchBtn').click(); e.preventDefault(); }});
+  </script>
+</body>
+</html>    }
 
     .hero{
       padding:28px;border-radius:20px;background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
