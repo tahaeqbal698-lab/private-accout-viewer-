@@ -1,144 +1,141 @@
+
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PRIVATE ACCOUNT VIEWER — Demo (Public only)</title>
-<style>
-  :root{ --accent-p:#b14bff; --accent-r:#ff6a88; --accent-y:#ffd36b; --text:#f5f5f5; --glass:rgba(255,255,255,0.05); }
-  html,body{height:100%;margin:0;background:#05010f;color:var(--text);font-family:Poppins,system-ui,Arial;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.4;mix-blend-mode:screen}
-  .blob.red{background:#ff3366;width:600px;height:600px;top:-150px;left:-200px}
-  .blob.green{background:#33ffaa;width:500px;height:500px;bottom:-200px;left:20%}
-  .blob.blue{background:#3399ff;width:500px;height:500px;top:40%;right:-200px}
-  canvas#particles{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.85}
-  .card{z-index:10;background:var(--glass);border-radius:20px;padding:32px 28px;width:520px;backdrop-filter:blur(12px);box-shadow:0 30px 90px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,0.06)}
-  .logo{font-size:56px;margin-bottom:10px}
-  h1{margin:0;font-size:22px;font-weight:900;text-transform:uppercase;background:linear-gradient(90deg,var(--accent-p),#ff9a8b,#ffd36b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .sub{font-size:13px;opacity:.8;margin:12px 0 20px}
-  .controls{display:flex;gap:12px;align-items:center}
-  .controls .left{flex:1}
-  label{display:block;text-align:left;font-size:12px;margin-top:6px;opacity:.7}
-  input{width:100%;padding:10px 12px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:var(--text);font-size:14px}
-  .btn{padding:12px 16px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent-r),var(--accent-y));color:#111;font-weight:800;cursor:pointer}
-  .status{margin-top:12px;font-size:13px}
-  .result{margin-top:18px;padding:18px;border-radius:12px;background:rgba(255,255,255,0.04);display:none}
-  .profile{display:flex;gap:18px;align-items:center}
-  .dp{width:200px;height:200px;border-radius:18px;overflow:hidden;flex:0 0 200px;background:linear-gradient(135deg,#eee,#ddd);display:grid;place-items:center;box-shadow:0 12px 40px rgba(0,0,0,0.5)}
-  .dp img{width:100%;height:100%;object-fit:cover;display:block}
-  .meta h2{margin:0;font-size:22px}
-  .meta .handle{color:var(--accent-p);font-weight:800;margin-top:6px}
-  .bio{margin-top:10px;color:rgba(255,255,255,0.95)}
-  .stats{display:flex;gap:14px;margin-top:14px}
-  .stat{font-weight:800;text-align:center}
-  .open-btn{margin-top:12px;padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent-p),#ff9a8b);color:white;cursor:pointer;font-weight:800;width:100%}
-  @media(max-width:620px){ .card{width:92%} .dp{width:140px;height:140px;flex:0 0 140px} }
+
+<html lang="en">  
+<head>  
+<meta charset="utf-8"/>  
+<meta name="viewport" content="width=device-width,initial-scale=1"/>  
+<title>PRIVATE ACCOUNT VIEWER</title>  
+<style>  
+  :root {  
+    --accent-p: #b14bff;  
+    --accent-r: #ff6a88;  
+    --accent-y: #ffd36b;  
+    --accent-g: #59d0ff;  
+    --text: #f5f5f5;  
+    --glass: rgba(255,255,255,0.05);  
+  }  
+  body {  
+    margin:0; height:100vh; display:flex; align-items:center; justify-content:center;  
+    font-family: 'Poppins',sans-serif; background:#05010f; overflow:hidden; color:var(--text);  
+  }  /* background RGB blobs */
+.blob {
+position:absolute; border-radius:50%; filter:blur(120px); opacity:0.4; mix-blend-mode:screen;
+animation: float 18s infinite ease-in-out;
+}
+.blob.red {background:#ff3366;width:600px;height:600px;top:-150px;left:-200px;}
+.blob.green {background:#33ffaa;width:500px;height:500px;bottom:-200px;left:20%;}
+.blob.blue {background:#3399ff;width:500px;height:500px;top:40%;right:-200px;}
+@keyframes float {50%{transform:translateY(-60px) scale(1.05);} }
+
+/* particles canvas */
+canvas#particles {position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.8;}
+
+/* card container */
+.card {
+z-index:10; background:var(--glass); border:1px solid rgba(255,255,255,0.08);
+border-radius:20px; padding:32px 28px; width:380px; text-align:center;
+backdrop-filter:blur(12px); box-shadow:0 30px 90px rgba(0,0,0,0.7);
+transform-style:preserve-3d; animation: pop .9s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes pop {from{transform:scale(.7) translateY(60px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+
+.logo {
+font-size:52px; margin-bottom:10px; filter:drop-shadow(0 0 12px rgba(255,255,255,.3));
+}
+h1 {
+margin:0; font-size:22px; font-weight:900; letter-spacing:1.5px;
+background:linear-gradient(90deg,var(--accent-p),#ff9a8b,#ffd36b);
+-webkit-background-clip:text; -webkit-text-fill-color:transparent;
+text-transform:uppercase; text-shadow:0 0 18px rgba(177,75,255,.4);
+}
+.sub {
+font-size:13px; opacity:.8; margin:12px 0 20px;
+}
+
+label {display:block; text-align:left; font-size:12px; margin-top:12px; opacity:.7; letter-spacing:1px;}
+input {
+width:100%; padding:12px 14px; margin-top:6px;
+border-radius:12px; border:none; outline:none;
+background:rgba(255,255,255,0.08); color:var(--text);
+font-size:14px; box-shadow:inset 0 8px 20px rgba(0,0,0,.6);
+text-align:center;
+}
+input::placeholder {color:rgba(255,255,255,0.5);}
+
+.btn {
+margin-top:18px; padding:14px; width:100%; border-radius:12px; border:none;
+background:linear-gradient(90deg,var(--accent-r),var(--accent-y));
+color:#111; font-weight:800; font-size:15px; cursor:pointer;
+box-shadow:0 20px 60px rgba(0,0,0,0.7); transition:.2s;
+}
+.btn:hover {transform:translateY(-3px) scale(1.03);}
+
+.status {
+margin-top:16px; font-size:13px; opacity:.85; min-height:20px;
+}
+
+/* result */
+.result {
+margin-top:20px; padding:18px; border-radius:14px;
+background:rgba(255,255,255,0.05); display:none;
+animation: fade .6s ease forwards;
+}
+@keyframes fade {from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.dp {width:100px;height:100px;border-radius:20px;overflow:hidden;margin:0 auto 14px;box-shadow:0 12px 30px rgba(0,0,0,0.5);}
+.dp img {width:100%;height:100%;object-fit:cover;}
+.handle {color:var(--accent-p);font-weight:700;margin-top:8px;}
+.bio {font-size:14px;opacity:.9;margin-top:10px;}
+.stats {display:flex;justify-content:space-around;margin-top:14px;font-weight:700;}
 </style>
-</head>
-<body>
-  <div class="blob red"></div>
-  <div class="blob green"></div>
-  <div class="blob blue"></div>
-  <canvas id="particles"></canvas>
 
-  <div class="card" role="main" aria-label="Public profile preview">
-    <div class="logo">👁✨</div>
-    <h1>PRIVATE ACCOUNT VIEWER</h1>
-    <div class="sub">🔑 Enter the username to lookup public info only</div>
+</head>  
+<body>  
+<div class="blob red"></div>  
+<div class="blob green"></div>  
+<div class="blob blue"></div>  
+<canvas id="particles"></canvas>  <div class="card">  
+  <div class="logo"></div>  
+  <h1>PRIVATE ACCOUNT VIEWER</h1>  
+  <div class="sub"> Enter your username & the account you want to search</div>  <label>Your Username</label>
+<input id="me" type="text" placeholder="@yourname">
 
-    <div class="controls">
-      <div class="left">
-        <label for="target">Target username</label>
-        <input id="target" placeholder="@target_username" />
-      </div>
-      <div>
-        <button class="btn" id="searchBtn">🔍 Fetch</button>
-      </div>
-    </div>
+<label>Target Username</label>
+<input id="target" type="text" placeholder="@username_to_search">
 
-    <div class="status" id="status">Idle — public info only</div>
+<button class="btn" id="searchBtn"> Search</button>
 
-    <div class="result" id="result" aria-live="polite">
-      <div class="profile">
-        <div class="dp" id="dp"><img src="https://via.placeholder.com/200" alt="dp"/></div>
-        <div class="meta">
-          <h2 id="name">—</h2>
-          <div class="handle" id="handle">@username</div>
-          <div class="bio" id="bio">Public bio will appear here</div>
-          <div class="stats">
-            <div class="stat"><div id="f1">--</div><div style="font-size:12px;color:rgba(255,255,255,0.75)">Followers</div></div>
-            <div class="stat"><div id="f2">--</div><div style="font-size:12px;color:rgba(255,255,255,0.75)">Following</div></div>
-            <div class="stat"><div id="f3">--</div><div style="font-size:12px;color:rgba(255,255,255,0.75)">Posts</div></div>
-          </div>
-          <button class="open-btn" id="openBtn">Open on Instagram</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<script>
-// particles visuals (soft RGB dots)
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let W = innerWidth, H = innerHeight;
-function resize(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; }
-resize(); addEventListener('resize', resize);
-const dots = Array.from({length:60}, ()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+1,dx:(Math.random()-.5)*0.6,dy:(Math.random()-.5)*0.6,h:[10,200,265][Math.floor(Math.random()*3)],a:Math.random()*0.12+0.06}));
-function loop(){ ctx.clearRect(0,0,W,H); for(const d of dots){ d.x+=d.dx; d.y+=d.dy; if(d.x<0||d.x>W) d.dx*=-1; if(d.y<0||d.y>H) d.dy*=-1; const g=ctx.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r*8); const col = d.h===10?`rgba(255,90,110,${d.a})`: d.h===200?`rgba(70,220,150,${d.a})`:`rgba(80,160,255,${d.a})`; g.addColorStop(0,col); g.addColorStop(1,'rgba(255,255,255,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(d.x,d.y,d.r*8,0,Math.PI*2); ctx.fill(); } requestAnimationFrame(loop); } loop();
-
-// UI + fetch
-const searchBtn = document.getElementById('searchBtn');
-const status = document.getElementById('status');
-const result = document.getElementById('result');
-const nameEl = document.getElementById('name');
-const handleEl = document.getElementById('handle');
-const bioEl = document.getElementById('bio');
-const f1 = document.getElementById('f1'), f2 = document.getElementById('f2'), f3 = document.getElementById('f3');
-const dp = document.getElementById('dp');
-const openBtn = document.getElementById('openBtn');
-
-function setStatus(t){ status.textContent = t; }
-
-searchBtn.addEventListener('click', async ()=>{
-  const username = document.getElementById('target').value.trim();
-  if(!username){ alert('Enter username'); return; }
-  setStatus('🔍 Searching public info…');
-  result.style.display = 'none';
-  try {
-    const resp = await fetch(`/api/profile?username=${encodeURIComponent(username)}`);
-    const data = await resp.json();
-    if(!resp.ok || !data || !data.ok){
-      setStatus('⚠️ Could not fetch public data (profile may be private or not found).');
-      return;
-    }
-
-    // populate UI
-    nameEl.textContent = data.full_name || data.username || username.replace(/^@/,'');
-    handleEl.textContent = '@' + (data.username || username.replace(/^@/,''));
-    bioEl.textContent = data.biography || 'No public bio available.';
-    f1.textContent = data.followers != null ? Number(data.followers).toLocaleString() : '--';
-    f2.textContent = data.following != null ? Number(data.following).toLocaleString() : '--';
-    f3.textContent = data.posts != null ? Number(data.posts).toLocaleString() : '--';
-
-    // dp
-    dp.innerHTML = '';
-    if(data.profile_pic_url){
-      const img = document.createElement('img');
-      img.src = data.profile_pic_url;
-      img.alt = (data.username || username) + ' avatar';
-      img.onerror = ()=> { dp.innerHTML = `<img src="https://via.placeholder.com/200">`; };
-      dp.appendChild(img);
-    } else {
-      dp.innerHTML = `<img src="https://via.placeholder.com/200">`;
-    }
-
-    openBtn.onclick = ()=> window.open('https://instagram.com/' + encodeURIComponent((data.username||username).replace(/^@/,'')), '_blank');
-    result.style.display = 'block';
-    setStatus('✅ Public profile data loaded.');
-  } catch(err){
-    setStatus('Fetch error: ' + (err.message || err));
-  }
-});
-</script>
-</body>
+  <div class="status" id="status">Waiting…</div>    <div class="result" id="result">  
+    <div class="dp" id="dp"><img src="https://via.placeholder.com/100" alt="dp"></div>  
+    <div class="handle" id="handle">@username</div>  
+    <div class="bio" id="bio">Demo bio information shown here </div>  
+    <div class="stats">  
+      <div><span id="f1">--</span><br>Followers</div>  
+      <div><span id="f2">--</span><br>Following</div>  
+      <div><span id="f3">--</span><br>Posts</div>  
+    </div>  
+  </div>  
+</div>  <script>  
+/* particles */  
+const c=document.getElementById("particles"),ctx=c.getContext("2d");  
+let W,H;function resize(){W=innerWidth;H=innerHeight;c.width=W;c.height=H}resize();addEventListener("resize",resize);  
+let p=[];for(let i=0;i<60;i++){p.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.6,vy:(Math.random()-.5)*.6,r:40+Math.random()*80,c:["#ff4d6d","#47e6a6","#4fa9ff"][i%3]});}  
+function draw(){ctx.clearRect(0,0,W,H);for(const o of p){o.x+=o.vx;o.y+=o.vy;if(o.x<-100)o.x=W+100;if(o.x>W+100)o.x=-100;if(o.y<-100)o.y=H+100;if(o.y>H+100)o.y=-100;const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);g.addColorStop(0,o.c+"55");g.addColorStop(1,"transparent");ctx.fillStyle=g;ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill();}requestAnimationFrame(draw);}draw();  
+  
+/* demo search flow */  
+const btn=document.getElementById("searchBtn"),status=document.getElementById("status"),res=document.getElementById("result");  
+btn.onclick=()=>{  
+  const u=document.getElementById("target").value.trim();if(!u){alert("Enter a username!");return;}  
+  res.style.display="none";status.textContent=" Searching…";  
+  setTimeout(()=>{status.textContent=" Getting info…";setTimeout(()=>{status.textContent=" Found public info";show(u);},1200);},1200);  
+};  
+function show(u){  
+  document.getElementById("handle").textContent="@"+u.replace(/^@/,"");  
+  document.getElementById("bio").textContent="This is a demo public bio for "+u+" ";  
+  document.getElementById("f1").textContent=Math.floor(Math.random()*1e5);  
+  document.getElementById("f2").textContent=Math.floor(Math.random()*1e3);  
+  document.getElementById("f3").textContent=Math.floor(Math.random()*500);  
+  res.style.display="block";  
+}  
+</script>  </body>  
 </html>
