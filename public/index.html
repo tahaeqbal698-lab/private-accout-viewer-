@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile Viewer</title>
+  <title>Private Account Viewer</title>
   <style>
     body {
       margin: 0;
@@ -11,89 +11,68 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
       font-family: Arial, sans-serif;
-      color: white;
-      overflow: hidden;
+      background: url('https://i.ibb.co/6ZzB4cY/instagram-bg.jpg') no-repeat center center/cover;
     }
-
     .card {
       background: rgba(0,0,0,0.7);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+      padding: 25px;
+      border-radius: 18px;
       text-align: center;
-      width: 350px;
-      animation: float 3s ease-in-out infinite;
+      width: 340px;
+      color: white;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
     }
-
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-    }
-
     h1 {
-      font-size: 28px;
+      font-size: 22px;
       margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(255,255,255,0.7);
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #ff0066;
+      text-transform: uppercase;
     }
-
     input {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 10px;
-      outline: none;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    button {
       width: 100%;
       padding: 12px;
-      margin-top: 15px;
-      background: linear-gradient(90deg, #ff416c, #ff4b2b);
+      margin: 8px 0;
+      border-radius: 8px;
       border: none;
-      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+      text-align: center;
+    }
+    button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(45deg,#ff0066,#ff6600);
       color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-    }
-
-    #output {
-      margin-top: 20px;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: bold;
-      color: #feda75;
-      text-shadow: 0 0 10px #000;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(45deg,#ff6600,#ff0066);
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>PROFILE VIEWER</h1>
+    <h1>PRIVATE ACCOUNT VIEWER</h1>
     <input type="text" id="user1" placeholder="Enter your username">
-    <input type="text" id="user2" placeholder="Enter search username">
-    <button onclick="showResult()">Search</button>
-    <div id="output"></div>
+    <input type="text" id="user2" placeholder="Enter the username you want to search">
+    <button onclick="redirect()">Search</button>
   </div>
 
   <script>
-    function showResult() {
-      const u1 = document.getElementById("user1").value.trim();
-      const u2 = document.getElementById("user2").value.trim();
-      if (!u1 || !u2) {
-        document.getElementById("output").innerText = "⚠️ Please enter both usernames!";
-        return;
+    function redirect() {
+      const user2 = document.getElementById("user2").value.trim();
+      if (user2) {
+        window.location.href = `https://instagram.com/${user2}`;
       }
-      document.getElementById("output").innerText = `🔍 ${u1} searched for ${u2}`;
     }
   </script>
 </body>
