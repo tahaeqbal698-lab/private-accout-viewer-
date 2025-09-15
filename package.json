@@ -1,16 +1,12 @@
-
 {
   "name": "private-account-viewer",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "root/server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node root/server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "dotenv": "^16.4.5",
-    "node-fetch": "^2.6.7",
-    "express-rate-limit": "^6.7.0",
-    "helmet": "^7.0.0"
+    "dotenv": "^16.0.3"
   }
 }
