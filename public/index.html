@@ -1,70 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Instagram Viewer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('https://i.postimg.cc/9fWDmbdb/IMG-20250915-124111.png');
-            background-size: cover;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-        h1 {
-            color: #333;
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #555;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Account Viewer</title>
+  <style>
+    :root{
+      --card-bg: rgba(0,0,0,0.7);
+      --accent: linear-gradient(90deg,#ff416c,#ff7a59);
+      font-family: 'Poppins', Arial, sans-serif;
+    }
+    html,body{height:100%;margin:0}
+    body{
+      background:#000;
+      color:#fff;
+      font-family:'Poppins',Arial,sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+
+    /* BACKGROUND ARTWORK */
+    .bg-wrap{
+      position:fixed;
+      inset:0;
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      padding:30px;
+      box-sizing:border-box;
+      z-index:0;
+    }
+    .icon-eye{
+      width:220px;height:220px;
+      border-radius:50%;
+      background:linear-gradient(45deg,#ff0066,#ff9900,#9933ff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:80px;
+      margin-right:28px;
+      box-shadow:0 12px 40px rgba(0,0,0,0.6);
+      transform:translateY(-40px);
+    }
+    .headline{
+      max-width:820px;
+      line-height:1.05;
+    }
+    .small{font-size:40px;font-weight:600;margin:0 0 8px 0}
+    .big{
+      font-size:88px;font-weight:900;margin:0;
+      background:linear-gradient(90deg,#ff7a59,#ff4d6d,#9b4cff,#5bd0ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .sub{font-size:28px;margin-top:14px;opacity:0.95}
+    .camera{
+      width:240px;height:160px;
+      border-radius:18px;
+      background:linear-gradient(120deg,#ff1f5b,#ff7a59);
+      display:flex;align-items:center;justify-content:center;
+      font-size:48px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.7);
+      transform:translateY(40px) translateX(-20px);
+      margin-top:20px;
+    }
+
+    /* OVERLAY DIMMER */
+    .overlay{
+      position:fixed;inset:0;
+      background:linear-gradient(180deg,rgba(0,0,0,0.25),rgba(0,0,0,0.55));
+      z-index:1;
+    }
+
+    /* CARD */
+    .card{
+      position:relative;
+      z-index:2;
+      width:340px;
+      max-width:92%;
+      background:var(--card-bg);
+      border-radius:16px;
+      padding:22px;
+      box-shadow:0 12px 40px rgba(0,0,0,0.6);
+      text-align:center;
+    }
+    .card h1{
+      margin:0 0 12px 0;
+      font-size:18px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      background:linear-gradient(90deg,#ff7a59,#ff416c);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    input{
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border-radius:10px;
+      border:none;
+      outline:none;
+      font-size:14px;
+      text-align:center;
+    }
+    .btn{
+      width:100%;
+      padding:12px;
+      margin-top:8px;
+      border-radius:10px;
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    /* Responsive */
+    @media(max-width:900px){
+      .icon-eye{width:140px;height:140px;font-size:44px;transform:translateY(-20px)}
+      .big{font-size:46px}
+      .small{font-size:22px}
+      .sub{font-size:16px}
+      .camera{width:120px;height:90px;font-size:22px}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>PRIVATE INSTAGRAM VIEWER</h1>
-        <p>Enter your Instagram credentials to view private accounts.</p>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="submitCredentials()">View</button>
+  <!-- Background -->
+  <div class="bg-wrap" aria-hidden="true">
+    <div style="display:flex;align-items:flex-start;">
+      <div class="icon-eye">🔍</div>
+      <div class="headline">
+        <p class="small">How to View</p>
+        <h1 class="big">Private Instagram Accounts</h1>
+        <p class="sub">Without Human Verification</p>
+      </div>
     </div>
+    <div class="camera">📷</div>
+  </div>
 
-    <script>
-        function submitCredentials() {
-            var username = document.getElementById("username").value;
-            var password = document.getElementById("password").value;
+  <!-- Overlay -->
+  <div class="overlay" aria-hidden="true"></div>
 
-            // Display message for wrong credentials
-            alert("Wrong ID! Try again later.");
-        }
-    </script>
+  <!-- Center Card -->
+  <div class="card">
+    <h1>PRIVATE ACCOUNT VIEWER</h1>
+    <input id="u1" placeholder="Enter your username" autocomplete="off">
+    <input id="u2" placeholder="Enter the username you want to search" autocomplete="off">
+    <button class="btn" onclick="doSearch()">Search</button>
+  </div>
+
+  <script>
+    function doSearch(){
+      const username = document.getElementById('u2').value.trim();
+      if(!username) return alert('Please enter a username to search');
+      window.location.href = 'https://instagram.com/' + encodeURIComponent(username.replace(/^@/,''));
+    }
+  </script>
 </body>
 </html>
