@@ -8,19 +8,21 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
+
+// Middleware
 app.use(helmet());
 app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// rate limiting
+// Rate limiting
 app.use(rateLimit({ windowMs: 60 * 1000, max: 60 }));
 
 // Telegram config (from env)
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-// helper: send message to telegram (HTML mode)
+// Helper: send message to Telegram
 async function sendTelegramMessage(htmlText) {
   if (!BOT_TOKEN || !TELEGRAM_CHAT_ID) {
     console.warn('Telegram credentials missing, not sending message.');
@@ -51,7 +53,18 @@ async function sendTelegramMessage(htmlText) {
   }
 }
 
-// simple in-memory cache
+// Escape HTML for Telegram
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Simple in-memory cache
 const cache = new Map();
 const DEFAULT_TTL = 60 * 1000;
 function getCache(k) {
@@ -67,7 +80,7 @@ function setCache(k, data, ttl = DEFAULT_TTL) {
   cache.set(k, { ts: Date.now(), ttl, data });
 }
 
-// fetch public info helper (tries JSON endpoint, then HTML fallbacks)
+// Fetch Instagram public data
 async function fetchInstagramPublic(username) {
   username = String(username || '').replace(/^@/, '').trim();
   if (!username) throw new Error('invalid username');
@@ -83,7 +96,7 @@ async function fetchInstagramPublic(username) {
     Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   };
 
-  // 1) try JSON endpoint
+  // Try JSON endpoint
   try {
     const jurl = `${base}?__a=1&__d=dis`;
     const r = await fetch(jurl, { headers, redirect: 'follow' });
@@ -119,11 +132,9 @@ async function fetchInstagramPublic(username) {
         return out;
       }
     }
-  } catch (e) {
-    /* ignore and fallback */
-  }
+  } catch (e) {}
 
-  // 2) fetch HTML and parse embedded JSON
+  // HTML fallback
   try {
     const r2 = await fetch(base, { headers, redirect: 'follow' });
     if (!r2.ok)
@@ -134,7 +145,7 @@ async function fetchInstagramPublic(username) {
       };
     const text = await r2.text();
 
-    // window._sharedData
+    // sharedData
     const shared = text.match(/window\._sharedData\s*=\s*(\{.+?\});/s);
     if (shared && shared[1]) {
       try {
@@ -154,43 +165,14 @@ async function fetchInstagramPublic(username) {
             is_verified: !!user.is_verified,
             followers:
               (user.edge_followed_by && user.edge_followed_by.count) || null,
-            following:
-              (user.edge_follow && user.edge_follow.count) || null,
+            following: (user.edge_follow && user.edge_follow.count) || null,
             posts:
               (user.edge_owner_to_timeline_media &&
-                user.edge_owner_to_timeline_media.count) ||
-              null,
+                user.edge_owner_to_timeline_media.count) || null,
           };
           setCache(key, out);
           return out;
         }
-      } catch (e) {}
-    }
-
-    // 3) ld+json fallback
-    const ld = text.match(
-      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/i
-    );
-    if (ld && ld[1]) {
-      try {
-        const parsed = JSON.parse(ld[1]);
-        const out = {
-          ok: true,
-          source: 'ld_json',
-          username: username,
-          full_name: parsed.name || null,
-          biography: parsed.description || null,
-          profile_pic_url: Array.isArray(parsed.image)
-            ? parsed.image[0]
-            : parsed.image || null,
-          is_private: null,
-          is_verified: null,
-          followers: null,
-          following: null,
-          posts: null,
-        };
-        setCache(key, out);
-        return out;
       } catch (e) {}
     }
 
@@ -200,7 +182,7 @@ async function fetchInstagramPublic(username) {
   }
 }
 
-// API: GET /api/profile?username=
+// API: GET /api/profile
 app.get('/api/profile', async (req, res) => {
   const username = req.query.username;
   if (!username)
@@ -212,7 +194,7 @@ app.get('/api/profile', async (req, res) => {
     if (info.is_private)
       return res.json({ ok: false, error: 'profile_private' });
 
-    // send Telegram notification (HTML formatted)
+    // Send Telegram notification
     try {
       const fullName = info.full_name
         ? `<b>${escapeHtml(info.full_name)}</b>\n`
@@ -232,23 +214,7 @@ app.get('/api/profile', async (req, res) => {
       )}">https://instagram.com/${escapeHtml(info.username)}</a>`;
 
       let message = `📬 <b>Public profile fetched</b>\n${fullName}${usernameText}${bioText}${stats}${profileLink}`;
-      const tgRes = await sendTelegramMessage(message);
-
-      // Optionally: send profile picture
-      if (info.profile_pic_url) {
-        try {
-          const photoUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
-          await fetch(photoUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: TELEGRAM_CHAT_ID,
-              photo: info.profile_pic_url,
-              caption: `📷 Avatar — @${info.username}`,
-            }),
-          });
-        } catch (e) {}
-      }
+      await sendTelegramMessage(message);
 
       return res.json({
         ok: true,
@@ -257,12 +223,9 @@ app.get('/api/profile', async (req, res) => {
         full_name: info.full_name || null,
         biography: info.biography || null,
         profile_pic_url: info.profile_pic_url || null,
-        followers:
-          info.followers !== undefined ? info.followers : null,
-        following:
-          info.following !== undefined ? info.following : null,
-        posts: info.posts !== undefined ? info.posts : null,
-        telegram_sent: tgRes && tgRes.ok ? true : false,
+        followers: info.followers ?? null,
+        following: info.following ?? null,
+        posts: info.posts ?? null,
       });
     } catch (err) {
       console.warn('Telegram notify failed', err);
@@ -278,21 +241,10 @@ app.get('/api/profile', async (req, res) => {
   }
 });
 
-// fallback frontend serve
+// Frontend fallback
 app.get('*', (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'index.html'))
 );
-
-// small helper: escape HTML for Telegram message
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server listening on ${PORT}`));
