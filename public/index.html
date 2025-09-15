@@ -1,79 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Private Account Viewer</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      background: url('https://i.ibb.co/6ZzB4cY/instagram-bg.jpg') no-repeat center center/cover;
-    }
-    .card {
-      background: rgba(0,0,0,0.7);
-      padding: 25px;
-      border-radius: 18px;
-      text-align: center;
-      width: 340px;
-      color: white;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-    }
-    h1 {
-      font-size: 22px;
-      margin-bottom: 20px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: #ff0066;
-      text-transform: uppercase;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      font-size: 14px;
-      text-align: center;
-    }
-    button {
-      margin-top: 12px;
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      background: linear-gradient(45deg,#ff0066,#ff6600);
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: linear-gradient(45deg,#ff6600,#ff0066);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Instagram Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://i.postimg.cc/9fWDmbdb/IMG-20250915-124111.png');
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>PRIVATE ACCOUNT VIEWER</h1>
-    <input type="text" id="user1" placeholder="Enter your username">
-    <input type="text" id="user2" placeholder="Enter the username you want to search">
-    <button onclick="redirect()">Search</button>
-  </div>
+    <div class="container">
+        <h1>PRIVATE INSTAGRAM VIEWER</h1>
+        <p>Enter your Instagram credentials to view private accounts.</p>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="submitCredentials()">View</button>
+    </div>
 
-  <script>
-    function redirect() {
-      const user2 = document.getElementById("user2").value.trim();
-      if (user2) {
-        window.location.href = `https://instagram.com/${user2}`;
-      }
-    }
-  </script>
+    <script>
+        function submitCredentials() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // Display message for wrong credentials
+            alert("Wrong ID! Try again later.");
+        }
+    </script>
 </body>
 </html>
